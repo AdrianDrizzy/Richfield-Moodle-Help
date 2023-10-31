@@ -76,6 +76,64 @@
             }
         }
     });
+    $(document).ready(function() {
+        const chatbotIcon = $("#chatbotIcon");
+        const chatModal = $("#chatModal");
+        const closeModal = $("#closeModal");
+        const form = $("#chat-form");
+        const input = $("#chat-input");
+        const messages = $("#chat-messages");
+        const apiKey = "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"; // Your OpenAI API key
+    
+        form.on("submit", async function(e) {
+            e.preventDefault();
+            const message = input.val();
+            input.val("");
+    
+            messages.append(`
+                <div class="message user-message">
+                    <i class="fas fa-user"></i> <span>${message}</span>
+                </div>
+            `);
+    
+            // Use axios library to make a POST request to the OpenAI API
+            try {
+                const response = await axios.post(
+                    "https://api.openai.com/v1/engines/davinci/completions",
+                    {
+                        prompt: message,
+                        model: "text-davinci-003",
+                        temperature: 0,
+                        max_tokens: 1000,
+                        top_p: 1,
+                        frequency_penalty: 0.0,
+                        presence_penalty: 0.0,
+                    },
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${apiKey}`,
+                        },
+                    }
+                );
+                const chatbotResponse = response.data.choices[0].text;
+    
+                messages.append(`
+                    <div class="message bot-message">
+                        <i class="fas fa-robot"></i> <span>${chatbotResponse}</span>
+                    </div>
+                `);
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        });
+    
+        // ... rest of your existing code using jQuery ...
+    });
+    
+    
+    
+    
     
 })(jQuery);
 
